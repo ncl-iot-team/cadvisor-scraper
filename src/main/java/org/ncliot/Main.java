@@ -34,15 +34,16 @@ import java.util.Map;
  */
 public class Main {
 
-    //Container IDs to monitor - You have to find the container ID via the web frontend of cAdvisor
-    //Change the IDs HERE!
+    //Container ID to monitor - You have to find the container ID via the web frontend of cAdvisor
+    //Change the ID HERE!
     private static final String containerId = "c95a60713be8c44c40621d81d7795dc06c4532440f79c16a9a73941a0644417c";
 
     //MongoDB address
-    //Change the address HERE!
+    //Change the host IP HERE!
     private static final String mongodbAddress = "mongodb://192.168.44.131:27017";
 
     //cAdvisor API endpoint
+    //Change the host IP HERE!
     private static final String endpoint = "http://192.168.44.131:8080/api/v1.3/docker/";
 
     //Temporary storage of metrics
