@@ -2,7 +2,7 @@ FROM ubuntu:20.04
 
 # Install dependencies
 RUN apt update
-RUN apt install maven
+RUN apt install maven -y
 
 # Copy source files
 RUN mkdir /app
