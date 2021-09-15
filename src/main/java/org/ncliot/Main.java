@@ -40,7 +40,7 @@ public class Main {
 
     //MongoDB address
     //Change the address HERE!
-    private static final String mongodbAddress = "mongodb://root:root@192.168.44.131:27017";
+    private static final String mongodbAddress = "mongodb://192.168.44.131:27017";
 
     //cAdvisor API endpoint
     private static final String endpoint = "http://192.168.44.131:8080/api/v1.3/docker/";
