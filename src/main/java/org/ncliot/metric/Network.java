@@ -1,4 +1,4 @@
-package com.ringosham.metric;
+package org.ncliot.metric;
 
 public class Network {
     private final String name;

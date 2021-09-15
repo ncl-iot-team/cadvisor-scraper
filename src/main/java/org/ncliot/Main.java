@@ -1,4 +1,4 @@
-package com.ringosham;
+package org.ncliot;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -8,10 +8,10 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.ringosham.metric.CPU;
-import com.ringosham.metric.DiskIO;
-import com.ringosham.metric.Memory;
-import com.ringosham.metric.Network;
+import org.ncliot.metric.CPU;
+import org.ncliot.metric.DiskIO;
+import org.ncliot.metric.Memory;
+import org.ncliot.metric.Network;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
