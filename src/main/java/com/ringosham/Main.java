@@ -36,7 +36,7 @@ public class Main {
 
     //Container IDs to monitor - You have to find the container ID via the web frontend of cAdvisor
     //Change the IDs HERE!
-    private static final String containerId = "f0c3b2a111ad802ebadb0bf3ae5765c9a3a586e0ced865082945706643afbb4c";
+    private static final String containerId = "c95a60713be8c44c40621d81d7795dc06c4532440f79c16a9a73941a0644417c";
 
     //MongoDB address
     //Change the address HERE!
@@ -77,11 +77,15 @@ public class Main {
             System.out.println("Sending request to cAdvisor at " + LocalDateTime.now());
             //Send request
             ClientResponse response = resource.type(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
+            if (response.getStatus() == 500)
+                throw new RuntimeException("Container " + containerId + " not found!");
+            else if (response.getStatus() != 200)
+                throw new RuntimeException(response.getEntity(String.class));
             //Get the response text
             String responseJson = response.getEntity(String.class);
             //Parse the Json using Gson
             Gson gson = new Gson();
-            JsonElement root = gson.fromJson(responseJson, JsonElement.class);
+            JsonObject root = gson.fromJson(responseJson, JsonObject.class).get("/docker/" + containerId).getAsJsonObject();
             JsonArray stats = root.getAsJsonObject().get("stats").getAsJsonArray();
 
             for (JsonElement metric : stats) {
@@ -120,10 +124,10 @@ public class Main {
                         JsonObject byteMetrics = diskioJson.get("io_service_bytes").getAsJsonArray().get(i).getAsJsonObject().get("stats").getAsJsonObject();
                         //Total disk io metrics in disk operations
                         JsonObject opMetrics = diskioJson.get("io_serviced").getAsJsonArray().get(i).getAsJsonObject().get("stats").getAsJsonObject();
-                        long byteRead = byteMetrics.get("read").getAsLong();
-                        long byteWrite = byteMetrics.get("write").getAsLong();
-                        long opRead = opMetrics.get("read").getAsLong();
-                        long opWrite = opMetrics.get("write").getAsLong();
+                        long byteRead = byteMetrics.get("Read").getAsLong();
+                        long byteWrite = byteMetrics.get("Write").getAsLong();
+                        long opRead = opMetrics.get("Read").getAsLong();
+                        long opWrite = opMetrics.get("Write").getAsLong();
                         diskio.add(new DiskIO(device, byteRead, byteWrite, opRead, opWrite));
                     }
                 } else {
