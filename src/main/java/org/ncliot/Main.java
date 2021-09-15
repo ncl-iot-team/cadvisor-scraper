@@ -34,7 +34,7 @@ import java.util.Map;
  */
 public class Main {
 
-    //Container ID to monitor - You have to find the container ID via the web frontend of cAdvisor
+    //Container ID to monitor - You have to find the container ID via the web frontend of cAdvisor or via Docker command line!
     //Change the ID HERE!
     private static final String containerId = "c95a60713be8c44c40621d81d7795dc06c4532440f79c16a9a73941a0644417c";
 
@@ -89,11 +89,12 @@ public class Main {
             JsonObject root = gson.fromJson(responseJson, JsonObject.class).get("/docker/" + containerId).getAsJsonObject();
             JsonArray stats = root.getAsJsonObject().get("stats").getAsJsonArray();
 
+            //The metrics are already sorted by its timestamp. So by looping the array, we are looking at the metrics from oldest to newest
             for (JsonElement metric : stats) {
                 LocalDateTime timestamp = LocalDateTime.parse(metric.getAsJsonObject().get("timestamp").getAsString(), DateTimeFormatter.ISO_DATE_TIME);
                 if (latestMetricTimestamp != null) {
                     //If we have already processed this metric before, we skip
-                    //This can happen because of network latency between this application and cAdvisor
+                    //This can happen because of network latency between the scraper and cAdvisor. We might see duplicate metrics between each metric request
                     if (timestamp.isBefore(latestMetricTimestamp) || timestamp.isEqual(latestMetricTimestamp))
                         continue;
                 }
@@ -261,7 +262,7 @@ public class Main {
             //noinspection BusyWait
             Thread.sleep(55000);
 
-            //Clean up
+            //Clear the map, and start over
             cpuMetrics.clear();
             memoryMetrics.clear();
             diskMetrics.clear();
