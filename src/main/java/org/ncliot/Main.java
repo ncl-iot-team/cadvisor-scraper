@@ -44,7 +44,7 @@ public class Main {
 
     //cAdvisor API endpoint
     //Change the host IP HERE!
-    private static final String endpoint = "http://192.168.44.131:8080/api/v1.3/docker/";
+    private static final String endpoint = "http://192.168.44.131:8080/api/v1.3/containers/docker/";
 
     //Temporary storage of metrics
     //Each entry in the map corresponds to 1 second of metric
