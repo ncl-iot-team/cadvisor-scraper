@@ -86,7 +86,7 @@ public class Main {
             String responseJson = response.getEntity(String.class);
             //Parse the Json using Gson
             Gson gson = new Gson();
-            JsonObject root = gson.fromJson(responseJson, JsonObject.class).get("/docker/" + containerId).getAsJsonObject();
+            JsonObject root = gson.fromJson(responseJson, JsonObject.class);
             JsonArray stats = root.getAsJsonObject().get("stats").getAsJsonArray();
 
             //The metrics are already sorted by its timestamp. So by looping the array, we are looking at the metrics from oldest to newest
@@ -168,13 +168,17 @@ public class Main {
             //For disk and network, we create a new collection for each disk and each network interface
             //We find what disks are connected to the container by looking at one of the metrics in diskIO
             List<String> diskNames = new ArrayList<>();
-            for (DiskIO disk : diskMetrics.get(diskMetrics.keySet().iterator().next()))
-                diskNames.add(disk.getDevice());
+            if (diskMetrics.keySet().iterator.hasNext()) {
+                for (DiskIO disk : diskMetrics.get(diskMetrics.keySet().iterator().next()))
+                    diskNames.add(disk.getDevice());
+            }
 
             //Do the same for network interfaces
             List<String> networkInterfaces = new ArrayList<>();
-            for (Network network : networkMetrics.get(networkMetrics.keySet().iterator().next()))
-                networkInterfaces.add(network.getName());
+            if (networkMetrics.keySet().iterator().hasNext()) {
+                for (Network network : networkMetrics.get(networkMetrics.keySet().iterator().next()))
+                   networkInterfaces.add(network.getName());
+            }
 
             //Then create or get the mongo collections for those objects
             Map<String, MongoCollection<Document>> diskCollections = new HashMap<>();
