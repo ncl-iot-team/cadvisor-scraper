@@ -168,7 +168,7 @@ public class Main {
             //For disk and network, we create a new collection for each disk and each network interface
             //We find what disks are connected to the container by looking at one of the metrics in diskIO
             List<String> diskNames = new ArrayList<>();
-            if (diskMetrics.keySet().iterator.hasNext()) {
+            if (diskMetrics.keySet().iterator().hasNext()) {
                 for (DiskIO disk : diskMetrics.get(diskMetrics.keySet().iterator().next()))
                     diskNames.add(disk.getDevice());
             }
