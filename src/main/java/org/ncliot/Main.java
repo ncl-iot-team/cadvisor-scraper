@@ -30,13 +30,14 @@ import java.util.Map;
 
 /**
  * Scrapes metrics of a Docker container using cAdvisor and pushes them to a mongoDB
+ *
  * @author Ringo Sham
  */
 public class Main {
 
     //Container ID to monitor - You have to find the container ID via the web frontend of cAdvisor or via Docker command line!
     //Change the ID HERE!
-    private static final String containerId = "c95a60713be8c44c40621d81d7795dc06c4532440f79c16a9a73941a0644417c";
+    private static final String containerId = "56ffd2cdbceda4eb85a2a26f6aad284aabad2c4a606b098a68ba32af40835cda";
 
     //MongoDB address
     //Change the host IP HERE!
@@ -137,20 +138,25 @@ public class Main {
                 }
 
                 //Network
-                JsonArray networkJson = metric.getAsJsonObject().get("network").getAsJsonObject().get("interfaces").getAsJsonArray();
+                JsonObject networkJson = metric.getAsJsonObject().get("network").getAsJsonObject();
                 //A container can have access to more than 1 network interface. Hence, we need a list
                 List<Network> network = new ArrayList<>();
-                for (JsonElement netInterface : networkJson) {
-                    String name = netInterface.getAsJsonObject().get("name").getAsString();
-                    long rxBytes = netInterface.getAsJsonObject().get("rx_bytes").getAsLong();
-                    long rxPackets = netInterface.getAsJsonObject().get("rx_packets").getAsLong();
-                    long rxErrors = netInterface.getAsJsonObject().get("rx_errors").getAsLong();
-                    long rxDropped = netInterface.getAsJsonObject().get("rx_dropped").getAsLong();
-                    long txBytes = netInterface.getAsJsonObject().get("tx_bytes").getAsLong();
-                    long txPackets = netInterface.getAsJsonObject().get("tx_packets").getAsLong();
-                    long txErrors = netInterface.getAsJsonObject().get("tx_errors").getAsLong();
-                    long txDropped = netInterface.getAsJsonObject().get("tx_dropped").getAsLong();
-                    network.add(new Network(name, rxBytes, rxPackets, rxErrors, rxDropped, txBytes, txPackets, txErrors, txDropped));
+                if (networkJson.has("interfaces")) {
+                    JsonArray netInterfaces = networkJson.getAsJsonArray("interfaces");
+                    for (JsonElement netInterface : netInterfaces) {
+                        String name = netInterface.getAsJsonObject().get("name").getAsString();
+                        long rxBytes = netInterface.getAsJsonObject().get("rx_bytes").getAsLong();
+                        long rxPackets = netInterface.getAsJsonObject().get("rx_packets").getAsLong();
+                        long rxErrors = netInterface.getAsJsonObject().get("rx_errors").getAsLong();
+                        long rxDropped = netInterface.getAsJsonObject().get("rx_dropped").getAsLong();
+                        long txBytes = netInterface.getAsJsonObject().get("tx_bytes").getAsLong();
+                        long txPackets = netInterface.getAsJsonObject().get("tx_packets").getAsLong();
+                        long txErrors = netInterface.getAsJsonObject().get("tx_errors").getAsLong();
+                        long txDropped = netInterface.getAsJsonObject().get("tx_dropped").getAsLong();
+                        network.add(new Network(name, rxBytes, rxPackets, rxErrors, rxDropped, txBytes, txPackets, txErrors, txDropped));
+                    }
+                } else {
+                    System.out.println(("Warn: Theres are no network metrics at " + timestamp));
                 }
 
                 //Store all info temporarily into a map
@@ -177,7 +183,7 @@ public class Main {
             List<String> networkInterfaces = new ArrayList<>();
             if (networkMetrics.keySet().iterator().hasNext()) {
                 for (Network network : networkMetrics.get(networkMetrics.keySet().iterator().next()))
-                   networkInterfaces.add(network.getName());
+                    networkInterfaces.add(network.getName());
             }
 
             //Then create or get the mongo collections for those objects
