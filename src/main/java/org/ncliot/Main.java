@@ -65,6 +65,11 @@ public class Main {
         //Setup MongoDB connection
         MongoClient mongoClient = MongoClients.create(mongodbAddress);
         System.out.println(("Connecting to " + mongodbAddress));
+
+        //Print variables
+        System.out.println("cAdvisor endpoint: " + endpoint);
+        System.out.println("Container ID: " + containerId);
+
         //Create the database (will create one if it doesn't exist)
         MongoDatabase database = mongoClient.getDatabase("metrics");
 
