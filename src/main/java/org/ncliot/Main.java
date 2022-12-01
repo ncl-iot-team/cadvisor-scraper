@@ -45,7 +45,7 @@ public class Main {
 
     //cAdvisor API endpoint
     //Change the host IP HERE!
-    private static final String endpoint = "http://192.168.44.131:8080/api/v1.3/containers/docker/";
+    private static final String endpoint = "http://192.168.44.131:8080/api/v1.3/docker/";
 
     //Temporary storage of metrics
     //Each entry in the map corresponds to 1 second of metric
@@ -93,7 +93,11 @@ public class Main {
             //Parse the Json using Gson
             Gson gson = new Gson();
             JsonObject root = gson.fromJson(responseJson, JsonObject.class);
-            JsonArray stats = root.getAsJsonObject().get("stats").getAsJsonArray();
+            JsonArray stats;
+            if (root.getAsJsonObject().has("stats"))
+                stats = root.getAsJsonObject().get("stats").getAsJsonArray();
+            else
+                stats = root.getAsJsonObject().get(String.format("/system.slice/docker-%s.scope", containerId)).getAsJsonObject().get("stats").getAsJsonArray();
 
             //The metrics are already sorted by its timestamp. So by looping the array, we are looking at the metrics from oldest to newest
             for (JsonElement metric : stats) {
