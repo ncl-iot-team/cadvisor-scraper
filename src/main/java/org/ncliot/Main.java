@@ -96,8 +96,10 @@ public class Main {
             JsonArray stats;
             if (root.getAsJsonObject().has("stats"))
                 stats = root.getAsJsonObject().get("stats").getAsJsonArray();
-            else
+            else if (root.getAsJsonObject().has(String.format("/system.slice/docker-%s.scope", containerId)))
                 stats = root.getAsJsonObject().get(String.format("/system.slice/docker-%s.scope", containerId)).getAsJsonObject().get("stats").getAsJsonArray();
+            else
+                stats = root.getAsJsonObject().get(String.format("/docker/%s", containerId)).getAsJsonObject().get("stats").getAsJsonArray();
 
             //The metrics are already sorted by its timestamp. So by looping the array, we are looking at the metrics from oldest to newest
             for (JsonElement metric : stats) {
